@@ -458,42 +458,12 @@ if [ "$VIRTUAL_PROTO" = "https" ] || var_true "$ENABLE_SSL" ;  then
   print_notice "Enabling SSL"
   mkdir -p /certs
 
-  if [ ! -f /certs/"${TLS_CERT}" ] && [ ! -f /certs/"${TLS_KEY}" ]; then
-    print_warn "No SSL certs found, autogenerating self-signed - WebRTC will not work with a self-signed certificate!"
-    cat <<EOF > /tmp/openssl.cnf
-[ req ]
-default_bits = 2048
-encrypt_key = yes
-distinguished_name = req_dn
-x509_extensions = cert_type
-prompt = no
-
-[ req_dn ]
-C=XX
-ST=XX
-L=Self Signed
-O=Freepbx
-OU=Freepbx
-CN=*
-emailAddress=hostmaster@local
-
-[ cert_type ]
-nsCertType = server
-EOF
-
-    silent openssl req -new -x509 -nodes -days 365 -config /tmp/openssl.cnf -out /certs/cert.pem -keyout /certs/key.pem
-    chmod 0600 /certs/key.pem
-    rm -f /tmp/openssl.cnf
-    TLS_CERT="cert.pem"
-    TLS_KEY="key.pem"
-  fi
-
   silent a2enmod ssl
   cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
 <VirtualHost *:$HTTPS_PORT>
     SSLEngine on
-    SSLCertificateFile "/certs/$TLS_CERT"
-    SSLCertificateKeyFile "/certs/$TLS_KEY"
+    SSLCertificateFile "/etc/asterisk/keys/integration/certificate.pem"
+    SSLCertificateKeyFile "/etc/asterisk/keys/integration/webserver.key"
     ErrorLog /var/log/apache2/error.log
     CustomLog /var/log/apache2/access.log common
 EOF

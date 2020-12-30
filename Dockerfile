@@ -1,17 +1,15 @@
 FROM tiredofit/nodejs:10-debian-latest
-LABEL maintainer="Dave Conroy (dave at tiredofit dot ca)"
+LABEL maintainer="Alenas Kisonas"
 
 ### Set defaults
-ENV ASTERISK_VERSION=17.6.0 \
+ENV ASTERISK_VERSION=17.9.0 \
     BCG729_VERSION=1.0.4 \
-    DONGLE_VERSION=20200610 \
     G72X_CPUHOST=penryn \
     G72X_VERSION=0.1 \
-    MONGODB_VERSION=4.2 \
-    PHP_VERSION=5.6 \
+    PHP_VERSION=7.3 \
     SPANDSP_VERSION=20180108 \
     RTP_START=18000 \
-    RTP_FINISH=20000
+    RTP_FINISH=18200
 
 ### Pin libxml2 packages to Debian repositories
 RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
@@ -23,8 +21,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     set -x && \
     curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/deb.sury.org.list && \
-    curl https://www.mongodb.org/static/pgp/server-${MONGODB_VERSION}.asc | apt-key add - && \
-    echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/${MONGODB_VERSION} main" > /etc/apt/sources.list.d/mongodb-org.list && \
     echo "deb http://ftp.us.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/backports.list && \
     echo "deb-src http://ftp.us.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list.d/backports.list && \
     apt-get update && \
@@ -129,8 +125,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                     locales-all \
                     make \
                     mariadb-client \
-                    mariadb-server \
-                    mongodb-org \
                     mpg123 \
                     odbc-mariadb \
                     php${PHP_VERSION} \
@@ -183,7 +177,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ./configure \
         --with-jansson-bundled \
         --with-pjproject-bundled \
-        --with-bluetooth \
+        #--with-bluetooth \
         --with-codec2 \
         --with-crypto \
         --with-gmime \
@@ -245,15 +239,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     make && \
     make install && \
     \
-#### Add USB Dongle support
-    git clone https://github.com/rusxakep/asterisk-chan-dongle /usr/src/asterisk-chan-dongle && \
-    cd /usr/src/asterisk-chan-dongle && \
-    git checkout tags/$DONGLE_VERSION && \
-    ./bootstrap && \
-    ./configure --with-astversion=$ASTERISK_VERSION && \
-    make && \
-    make install && \
-    \
     ldconfig && \
     \
 ### Cleanup
@@ -276,25 +261,17 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     mkdir -p /var/log/apache2 && \
     mkdir -p /var/log/httpd && \
     \
-### Zabbix setup
-    echo '%zabbix ALL=(asterisk) NOPASSWD:/usr/sbin/asterisk' >> /etc/sudoers && \
-    \
 ### Setup for data persistence
     mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
     mv /home/asterisk /assets/config/home/ && \
     ln -s /data/home/asterisk /home/asterisk && \
     mv /var/lib/asterisk /assets/config/var/lib/ && \
     ln -s /data/var/lib/asterisk /var/lib/asterisk && \
-    ln -s /data/usr/local/fop2 /usr/local/fop2 && \
     mkdir -p /assets/config/var/run/ && \
     mv /var/run/asterisk /assets/config/var/run/ && \
-    mv /var/lib/mysql /assets/config/var/lib/ && \
     mkdir -p /assets/config/var/spool && \
     mv /var/spool/cron /assets/config/var/spool/ && \
     ln -s /data/var/spool/cron /var/spool/cron && \
-    mkdir -p /var/run/mongodb && \
-    rm -rf /var/lib/mongodb && \
-    ln -s /data/var/lib/mongodb /var/lib/mongodb && \
     ln -s /data/var/run/asterisk /var/run/asterisk && \
     rm -rf /var/spool/asterisk && \
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
@@ -302,7 +279,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking configuration
-EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8008 8009 8025 ${RTP_START}-${RTP_FINISH}/udp
+EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8088 8089 8025 ${RTP_START}-${RTP_FINISH}/udp
 
 ### Files add
 ADD install /

@@ -1,0 +1,98 @@
+version: '3'
+
+# First set up docker network on a host !!!
+services:
+  freepbx:
+    container_name: freepbx-app
+    image: al3nas/freepbx:1
+    ports:
+      - 80:80
+      - 443:443
+      - 4569:4569/udp
+      - 5060:5060/udp
+      #- 5160:5160/udp
+      #- 8008:8008/tcp
+      - 8089:8089/tcp
+      - 18000-18200:18000-18200/udp
+    volumes:
+      #- /sys/fs/cgroup:/sys/fs/cgroup:ro
+      # Apache certs
+      #- ~/certs:/certs
+      # Asterisk certs
+      - ~/data:/data
+      - ~/logs:/var/log
+      - ~/html:/var/www/html
+
+     ### Only Enable this option below if you set DB_EMBEDDED=TRUE
+     #- ./db:/var/lib/mysql
+     ### You can drop custom files overtop of the image if you have made modifications to modules/css/whatever - Use with care
+     #- ./assets/custom:/assets/custom
+
+    environment: 
+      - HOSTNAME=voip.pir.lt
+      - VIRTUAL_HOST=voip.pir.lt
+      #- VIRTUAL_NETWORK=nginx-proxy
+     ### If you want to connect to the SSL Enabled Container 
+      - VIRTUAL_PORT=443
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=80
+
+      - RTP_START=18000
+      - RTP_FINISH=18200
+
+      - ENABLE_FAIL2BAN=TRUE
+      - ENABLE_SSL=TRUE
+      - ENABLE_ZABBIX=FALSE
+      - ENABLE_XMPP=FALSE
+      - UCP_FIRST=FALSE
+     # - ZABBIX_HOSTNAME=freepbx-app
+
+      - INSTALL_ADDITIONAL_MODULES=webrtc
+    
+     ## Use for External MySQL Server
+      - DB_EMBEDDED=FALSE
+     ### These are only necessary if DB_EMBEDDED=FALSE
+      - DB_HOST=freepbx-db
+      - DB_PORT=3306
+      - DB_NAME=asterisk
+      - DB_USER=asterisk
+      - DB_PASS=adkfjaHGFYTEUIB7235
+    
+    ### These final lines are for Fail2ban. If you don't want, comment and also add ENABLE_FAIL2BAN=FALSE to your environment
+    cap_add:
+      - NET_ADMIN
+    privileged: true
+    restart: always
+
+  freepbx-db:
+    container_name: freepbx-db
+    image: tiredofit/mariadb
+    volumes:
+      - ~/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=jdhTRDvn636RYDg
+      - MYSQL_DATABASE=asterisk
+      - MYSQL_USER=asterisk
+      - MYSQL_PASSWORD=adkfjaHGFYTEUIB7235
+    restart: always
+
+  # freepbx-db-backup:
+  #   container_name: freepbx-db-backup
+  #   image: tiredofit/db-backup
+  #   links:
+  #    - freepbx-db
+  #   volumes:
+  #     - ~/dbbackup:/backup
+  #   environment:
+  #     - ZABBIX_HOSTNAME=freepbx-db-backup
+  #     - DB_HOST=freepbx-db
+  #     - DB_TYPE=mariadb
+  #     - DB_NAME=asterisk
+  #     - DB_USER=asterisk
+  #     - DB_PASS=adkfjaHGFYTEUIB7235
+  #     - DB_DUMP_FREQ=1440
+  #     - DB_DUMP_BEGIN=0000
+  #     - DB_CLEANUP_TIME=8640
+  #     - MD5=FALSE
+  #   restart: always
+

@@ -10,6 +10,7 @@ services:
       - 443:443
       - 4569:4569/udp
       - 5060:5060/udp
+      - 5061:5061
       #- 5160:5160/udp
       #- 8008:8008/tcp
       - 8089:8089/tcp
@@ -61,6 +62,7 @@ services:
     ### These final lines are for Fail2ban. If you don't want, comment and also add ENABLE_FAIL2BAN=FALSE to your environment
     cap_add:
       - NET_ADMIN
+      - SYS_ADMIN
     privileged: true
     restart: always
 

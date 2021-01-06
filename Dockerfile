@@ -6,7 +6,7 @@ ENV ASTERISK_VERSION=17.9.0 \
     BCG729_VERSION=1.0.4 \
     G72X_CPUHOST=penryn \
     G72X_VERSION=0.1 \
-    PHP_VERSION=7.3 \
+    PHP_VERSION=5.6 \
     SPANDSP_VERSION=20180108 \
     RTP_START=18000 \
     RTP_FINISH=18200
@@ -21,8 +21,9 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     set -x && \
     curl https://packages.sury.org/php/apt.gpg | apt-key add - && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/deb.sury.org.list && \
-    echo "deb http://ftp.us.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/backports.list && \
-    echo "deb-src http://ftp.us.debian.org/debian/ buster-backports main" >> /etc/apt/sources.list.d/backports.list && \
+    echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list && \
+    echo "deb-src http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list.d/backports.list && \
+### Update system
     apt-get update && \
     apt-get -o Dpkg::Options::="--force-confold" upgrade -y && \
     \
@@ -37,7 +38,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                         flex \
                         graphviz \
                         libasound2-dev \
-                        libbluetooth-dev \
                         libc-client2007e-dev \
                         libcfg-dev \
                         libcodec2-dev \
@@ -102,7 +102,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
                     iptables \
                     lame \
                     libavahi-client3 \
-                    libbluetooth3 \
                     libc-client2007e \
                     libcfg7 \
                     libcpg4 \
@@ -177,7 +176,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ./configure \
         --with-jansson-bundled \
         --with-pjproject-bundled \
-        #--with-bluetooth \
         --with-codec2 \
         --with-crypto \
         --with-gmime \

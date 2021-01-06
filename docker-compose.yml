@@ -19,15 +19,9 @@ services:
       #- /sys/fs/cgroup:/sys/fs/cgroup:ro
       # Apache certs
       #- ~/certs:/certs
-      # Asterisk certs
       - ~/data:/data
       - ~/logs:/var/log
       - ~/html:/var/www/html
-
-     ### Only Enable this option below if you set DB_EMBEDDED=TRUE
-     #- ./db:/var/lib/mysql
-     ### You can drop custom files overtop of the image if you have made modifications to modules/css/whatever - Use with care
-     #- ./assets/custom:/assets/custom
 
     environment: 
       - HOSTNAME=voip.pir.lt
@@ -46,7 +40,6 @@ services:
       - ENABLE_ZABBIX=FALSE
       - ENABLE_XMPP=FALSE
       - UCP_FIRST=FALSE
-     # - ZABBIX_HOSTNAME=freepbx-app
 
       - INSTALL_ADDITIONAL_MODULES=webrtc
     
@@ -57,7 +50,7 @@ services:
       - DB_PORT=3306
       - DB_NAME=asterisk
       - DB_USER=asterisk
-      - DB_PASS=adkfjaHGFYTEUIB7235
+      - DB_PASS=we7y3274.aHGFYTEUIB7235
     
     ### These final lines are for Fail2ban. If you don't want, comment and also add ENABLE_FAIL2BAN=FALSE to your environment
     cap_add:
@@ -72,10 +65,10 @@ services:
     volumes:
       - ~/db:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=jdhTRDvn636RYDg
+      - MYSQL_ROOT_PASSWORD=jdhTR.sudy2673Dvn636RYDg
       - MYSQL_DATABASE=asterisk
       - MYSQL_USER=asterisk
-      - MYSQL_PASSWORD=adkfjaHGFYTEUIB7235
+      - MYSQL_PASSWORD=we7y3274.aHGFYTEUIB7235
     restart: always
 
   # freepbx-db-backup:

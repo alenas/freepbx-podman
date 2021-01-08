@@ -4,12 +4,14 @@ mysqlrootpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 24 | he
 echo 'MySQL: ' $mysqlpwd '    ROOT : ' $mysqlrootpwd > pwd.txt
 
 ### create pod
+podman pod stop pbx
 podman pod create -n pbx --hostname voip.pir.lt \
     -p 80:80/tcp -p 443:443/tcp \
     -p 5060:5060/tcp -p 5060:5060/udp -p 5061:5061/tcp -p 5061:5061/udp \
     -p 8089:8089 \
     -p 18000-18200:18000-18200/udp \
     --replace
+podman pod start pbx
 
 ### create db container
 podman run -d --name freepbx-db --pod pbx \

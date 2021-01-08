@@ -2,7 +2,8 @@ FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Alenas Kisonas"
 
 ### Set defaults
-ENV ASTERISK_VERSION=18.1.0 \
+ENV ASTERISK_VERSION=18.1.1 \
+    FREEPBX_VERSION=15.0.17.14 \
     BCG729_VERSION=1.0.4 \
     G72X_CPUHOST=penryn \
     G72X_VERSION=0.1 \

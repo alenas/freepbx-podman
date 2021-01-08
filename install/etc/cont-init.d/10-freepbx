@@ -163,7 +163,7 @@ EOF
     sed -i "s/'default' => 'localhost',/'default' => '$DB_HOST',/g" /usr/src/freepbx/installlib/installcommand.class.php
     sed -i "s/'default' => 'asteriskcdrdb',/'default' => '$DB_NAME',/g" /usr/src/freepbx/installlib/installcommand.class.php
     sed -i "s/\$amp_conf\['CDRDBNAME'\] = \$answers\['cdrdbname'\];/\$amp_conf\['CDRDBNAME'\] = '$DB_NAME';/g" /usr/src/freepbx/installlib/installcommand.class.php
-    silent ./install -n --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbname="$DB_NAME" --cdrdbname="$DB_NAME" --webroot="$WEBROOT"
+    ./install -n --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbname="$DB_NAME" --cdrdbname="$DB_NAME" --webroot="$WEBROOT"
 
     cat <<EOF > /etc/freepbx.conf
 <?php
@@ -185,7 +185,7 @@ require_once('$WEBROOT/admin/bootstrap.php');
 EOF
   else
     print_notice "Installing FreePBX $FREEPBX_VERSION source code (db embedded)"
-    silent ./install -n --webroot="$WEBROOT"
+    ./install -n --webroot="$WEBROOT"
   fi
 
   sed -i '/^preload = chan_local.so$/d' /etc/asterisk/modules.conf
@@ -388,7 +388,7 @@ check_process
 silent fwconsole start
 
 ### Apache setup
-mkdir -p /var/log/apache2/
+mkdir -p /var/log/apache2
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
 <Directory $WEBROOT>
   AllowOverride All

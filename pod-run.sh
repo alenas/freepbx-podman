@@ -1,6 +1,8 @@
 mysqlpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 16 | head -n 1)
 mysqlrootpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 24 | head -n 1)
 
+echo 'MySQL: ' $mysqlpwd '    ROOT : ' $mysqlrootpwd > pwd.txt
+
 ### create pod
 podman pod create -n pbx --hostname voip.pir.lt \
     -p 80:80/tcp -p 443:443/tcp \
@@ -10,7 +12,7 @@ podman pod create -n pbx --hostname voip.pir.lt \
     --replace
 
 ### create db container
-podman create --name freepbx-db --pod pbx \
+podman run -d --name freepbx-db --pod pbx \
     -v /pbx/db:/var/lib/mysql \
     -v /pbx/dbbackup:/backup \
     -e MYSQL_ROOT_PASSWORD=$mysqlrootpwd \
@@ -21,7 +23,7 @@ podman create --name freepbx-db --pod pbx \
     tiredofit/mariadb:latest
 
 ### create app container
-podman create --name freepbx --pod pbx \
+podman run --name freepbx --pod pbx \
     -v /pbx/data:/data:Z \
     -v /pbx/logs:/var/log:Z \
     -v /pbx/www:/var/www/html:Z \

@@ -388,6 +388,7 @@ check_process
 silent fwconsole start
 
 ### Apache setup
+mkdir -p /var/log/apache2/
 cat >> /etc/apache2/conf-available/allowoverride.conf << EOF
 <Directory $WEBROOT>
   AllowOverride All
@@ -432,7 +433,6 @@ if var_true "$ENABLE_FOP" ;  then
 
 ### FOP2 installation
     mkdir -p /data/usr/local/fop2
-    mkdir -p /var/log/apache2
     cd /usr/src || exit
     silent wget http://download.fop2.com/install_fop2.sh
     chmod +x install_fop2.sh
@@ -521,7 +521,6 @@ silent a2enconf remoteip.conf
 
 sed -iE 's/\(APACHE_RUN_USER=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
 sed -iE 's/\(APACHE_RUN_GROUP=\)\(.*\)/\1asterisk/g' /etc/apache2/envvars
-mkdir -p /var/log/apache2
 chown -R root:adm /var/log/apache2
 chown asterisk. /run/lock/apache2
 

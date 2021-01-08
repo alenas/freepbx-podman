@@ -2,7 +2,7 @@ FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Alenas Kisonas"
 
 ### Set defaults
-ENV ASTERISK_VERSION=17.9.0 \
+ENV ASTERISK_VERSION=18.1.0 \
     BCG729_VERSION=1.0.4 \
     G72X_CPUHOST=penryn \
     G72X_VERSION=0.1 \
@@ -262,7 +262,6 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
 ### Setup for data persistence
     mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
     mv /home/asterisk /assets/config/home/ && \
-    ln -s /data/home/asterisk /home/asterisk && \
     mv /var/lib/asterisk /assets/config/var/lib/ && \
     ln -s /data/var/lib/asterisk /var/lib/asterisk && \
     mkdir -p /assets/config/var/run/ && \

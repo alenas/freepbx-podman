@@ -1,6 +1,3 @@
-mysqlpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 16 | head -n 1)
-mysqlrootpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 24 | head -n 1)
-
 ### create pod
 podman pod create -n pbx --hostname voip.pir.lt \
     -p 80:80/tcp -p 443:443/tcp \
@@ -13,11 +10,11 @@ podman pod create -n pbx --hostname voip.pir.lt \
 podman create --name freepbx-db --pod pbx \
     -v /pbx/db:/var/lib/mysql \
     -v /pbx/dbbackup:/backup \
-    -e MYSQL_ROOT_PASSWORD=$mysqlrootpwd \
+    -e MYSQL_ROOT_PASSWORD=jd.28hTR.sudy267s3Dvn636RYDg \
     -e MYSQL_DATABASE=asterisk \
     -e MYSQL_USER=asterisk \
-    -e MYSQL_PASSWORD=$mysqlpwd \
-    --replace \
+    -e MYSQL_PASSWORD=we7y3274.aHGFYTEUIB7235 \
+    --tmpfs /run --tmpfs /run/lock \
     tiredofit/mariadb:latest
 
 ### create app container
@@ -25,6 +22,7 @@ podman create --name freepbx --pod pbx \
     -v /pbx/data:/data:Z \
     -v /pbx/logs:/var/log:Z \
     -v /pbx/www:/var/www/html:Z \
+    -e HOSTNAME=voip.pir.lt \
     -e RTP_START=18000 \
     -e RTP_FINISH=18200 \
     -e ENABLE_FAIL2BAN=TRUE \
@@ -38,10 +36,10 @@ podman create --name freepbx --pod pbx \
     -e DB_PORT=3306 \
     -e DB_NAME=asterisk \
     -e DB_USER=asterisk \
-    -e DB_PASS=$mysqlpwd \
+    -e DB_PASS=we7y3274.aHGFYTEUIB7235 \
     --replace \
     --cap-add=NET_ADMIN \
-    al3nas/freepbx:181
+    tiredofit/freepbx:latest
 
 
 

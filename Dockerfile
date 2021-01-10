@@ -277,7 +277,7 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking configuration
-EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8088 8089 8025 ${RTP_START}-${RTP_FINISH}/udp
+EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8088 8089 18000-18200/udp
 
 ### Files add
 ADD install /

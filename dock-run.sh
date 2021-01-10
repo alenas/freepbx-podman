@@ -1,16 +1,13 @@
-mysqlpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 16 | head -n 1)
-mysqlrootpwd=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()' | fold -w 24 | head -n 1)
-
-echo 'MySQL: ' $mysqlpwd '    ROOT : ' $mysqlrootpwd > pwd.txt
+echo 'MySQL: ' $MYSQLPWD '    ROOT : ' $MYSQLROOTPWD
 
 ### create db container
 docker run -d --name freepbx-db \
-    -v /pbx/db:/var/lib/mysql \
+    -v asterisk-db-181:/var/lib/mysql \
     -v /pbx/dbbackup:/backup \
-    -e MYSQL_ROOT_PASSWORD=$mysqlrootpwd \
+    -e MYSQL_ROOT_PASSWORD=$MYSQLROOTPWD \
     -e MYSQL_DATABASE=asterisk \
     -e MYSQL_USER=asterisk \
-    -e MYSQL_PASSWORD=$mysqlpwd \
+    -e MYSQL_PASSWORD=$MYSQLPWD \
     --network pbx-net \
     tiredofit/mariadb:latest
 
@@ -38,7 +35,7 @@ docker run --name freepbx \
     -e DB_PORT=3306 \
     -e DB_NAME=asterisk \
     -e DB_USER=asterisk \
-    -e DB_PASS=$mysqlpwd \
+    -e DB_PASS=$MYSQLPWD \
     --cap-add=NET_ADMIN --cap-add=SYS_ADMIN \
     --network pbx-net \
     al3nas/freepbx:181

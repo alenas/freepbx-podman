@@ -1,5 +1,5 @@
 podman build -t al3nas/freepbx:181 \
-    --rm --memory 3g --memory-swap 3g \
+    --rm \
     --cap-add=NET_ADMIN \
     --squash-all \
     -f Dockerfile .

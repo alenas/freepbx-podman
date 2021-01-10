@@ -164,6 +164,22 @@ The following ports are exposed.
 | `18000-20000/udp` | RTP ports   |
 
 
+### FreePBX menu
+
+* Example file in /examples/freepbx_menu.conf. Copy it to /etc/asterisk, more info here https://wiki.freepbx.org/display/FOP/FreePBX+Menu+Conf
+
+### Let's Encrypt certificate generation from FreePBX
+
+* UCP_FIRST should be set to FALSE
+* Modify file /etc/apache2/sites-enabled/000-default.conf and point certificates here:
+```
+    SSLCertificateFile "/etc/asterisk/keys/integration/certificate.pem"
+    SSLCertificateKeyFile "/etc/asterisk/keys/integration/webserver.key"
+```
+There are two ways to do this:
+1. If you are building a new docker image, then you can modify /install/etc/cont-init.d/10-freepbx file, around lines 465 for above change to be baked into image.
+2. If you are using a pre built image, then run attached container, wait for everything to be installed, then enter the container and modify /install/etc/cont-init.d/10-freepbx file and commit to a new image. Otherwise everytime you build a new container from image - it will screw up certificates.
+
 ### Fail2Ban
 
 * For fail2ban rules to kickin, the `security` log level needs to be enable for asterisk `full` log file. This can be done from the Settings > Log File Settings > Log files.

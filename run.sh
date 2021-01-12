@@ -8,11 +8,11 @@ mkdir -p /$podname/logs
 
 ### create pod
 podman pod create -n $podname --hostname voip.pir.lt \
-    --network host
-    # -p 80:80/tcp -p 443:443/tcp \
-    # -p 5060:5060/tcp -p 5060:5060/udp -p 5061:5061/tcp -p 5061:5061/udp \
-    # -p 8089:8089 \
-    # -p 18000-18200:18000-18200/udp
+    --network bridge \
+    -p 80:80/tcp -p 443:443/tcp \
+    -p 5060:5060/tcp -p 5060:5060/udp -p 5061:5061/tcp -p 5061:5061/udp \
+    -p 8089:8089 \
+    -p 18000-18200:18000-18200/udp
 
 podman pod start pbx
 
@@ -30,7 +30,6 @@ podman run --name $podname-app --pod $podname \
     -v /$podname/data:/data \
     -v /$podname/logs:/var/log \
     -v /$podname/www:/var/www/html \
-    -v /sys/fs/cgroup:/sys/fs/cgroup:ro \
     -e RTP_START=18000 \
     -e RTP_FINISH=18200 \
     -e ENABLE_FAIL2BAN=TRUE \
@@ -46,9 +45,8 @@ podman run --name $podname-app --pod $podname \
     -e DB_NAME=asterisk \
     -e DB_USER=asterisk \
     -e DB_PASS=$MYSQLPWD \
-    --cap-add=NET_ADMIN \
-        tiredofit/freepbx:latest
-        #al3nas/freepbx:w176
+    --systemd=true \
+        al3nas/freepbx:w176
 
 
 

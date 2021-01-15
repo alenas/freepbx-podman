@@ -4,8 +4,9 @@ mkdir -p /$podname/data
 mkdir -p /$podname/www
 mkdir -p /$podname/logs
 
-. cleanup.sh $podname
+#. cleanup.sh $podname
 
+echo 'Creating pod: ' $podname
 ### create pod
 podman pod create -n $podname --hostname voip.pir.lt \
     --network bridge \
@@ -14,8 +15,10 @@ podman pod create -n $podname --hostname voip.pir.lt \
     -p 8089:8089 \
     -p 18000-18200:18000-18200/udp
 
+echo 'Starting pod: ' $podname
 podman pod start pbx
 
+echo 'Creating DB container: ' $podname-db
 ### create db container
 podman run -d --name $podname-db --pod $podname \
     -v $podname-db:/var/lib/mysql \
@@ -25,6 +28,7 @@ podman run -d --name $podname-db --pod $podname \
     -e MYSQL_ROOT_PASSWORD=$MYSQLROOTPWD \
         mariadb:10.5
 
+echo 'Creating APP container: ' $podname-app
 ### create app container - run attached to 
 podman run --name $podname-app --pod $podname \
     -v /$podname/data:/data \
@@ -37,16 +41,16 @@ podman run --name $podname-app --pod $podname \
     -e ENABLE_ZABBIX=FALSE \
     -e ENABLE_XMPP=FALSE \
     -e UCP_FIRST=FALSE \
-    -e FREEPBX_VERSION=15.0.17.12 \
-    -e INSTALL_ADDITIONAL_MODULES=webrtc \
+    -e FREEPBX_VERSION=15.0.17.14 \
+    -e INSTALL_ADDITIONAL_MODULES=webrtc callforward findmefollow ringgroups cel \
     -e DB_EMBEDDED=FALSE \
     -e DB_HOST=127.0.0.1 \
     -e DB_PORT=3306 \
     -e DB_NAME=asterisk \
     -e DB_USER=asterisk \
     -e DB_PASS=$MYSQLPWD \
-    --systemd=true \
-        al3nas/freepbx:w176
+    --cap-add=NET_ADMIN \
+        al3nas/freepbx:176
 
 
 

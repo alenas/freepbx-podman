@@ -219,10 +219,10 @@ RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     make && \
     make install && \
     make install-headers && \
-    make config && \
-    \
+    make config
+
 #### Add G729 codecs
-    git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 && \
+RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729 && \
     cd /usr/src/bcg729 && \
     git checkout tags/$BCG729_VERSION && \
     ./autogen.sh && \

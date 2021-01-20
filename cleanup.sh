@@ -9,7 +9,7 @@ then
     rm -f -r /$1/logs/*;
     rm -f -r /$1/www/*;
 else
-    echo "Bad prompt: " $1;
+    echo "Bad prompt: " $@;
 fi
 
 

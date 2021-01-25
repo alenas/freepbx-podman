@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ $# -ne 2 ]  
 then 
     echo 'Need 2 parameters: PODNAME, VERSION. Got: ' $@
@@ -26,7 +27,7 @@ podman run -d --name $podname-app --pod $podname \
     -e ENABLE_ZABBIX=FALSE \
     -e ENABLE_XMPP=FALSE \
     -e UCP_FIRST=FALSE \
-    -e FREEPBX_VERSION=15.0.17.14 \
+    -e FREEPBX_VERSION=15.0.17.15 \
     -e INSTALL_ADDITIONAL_MODULES="webrtc callforward findmefollow ringgroups cel" \
     -e DB_EMBEDDED=FALSE \
     -e DB_HOST=127.0.0.1 \
@@ -37,4 +38,6 @@ podman run -d --name $podname-app --pod $podname \
     --cap-add=NET_ADMIN \
         al3nas/freepbx:$version
 
+### remind to refresh signatures 
+echo "Run this after it starts: podman exec -t $podname-app fwconsole ma refreshsignatures"
 podman attach $podname-app

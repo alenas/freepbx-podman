@@ -1,3 +1,4 @@
+#!/bin/bash
 podname=pbx
 version=latest
 

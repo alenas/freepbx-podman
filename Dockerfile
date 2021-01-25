@@ -274,7 +274,9 @@ RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729
     rm -rf /var/spool/asterisk && \
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
     rm -rf /etc/asterisk && \
-    ln -s /data/etc/asterisk /etc/asterisk
+    ln -s /data/etc/asterisk /etc/asterisk && \
+    mv /etc/fail2ban /data/etc/fail2ban && \
+    ln -s /data/etc/fail2ban /etc/fail2ban
 
 ### Networking configuration
 EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8088 8089 18000-18200/udp

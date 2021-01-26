@@ -3,20 +3,24 @@ backend = auto
 enabled  = true
 filter   = asterisk-security
 logpath  = /var/log/asterisk/full
+logencoding = utf-8
 maxretry = 5
 bantime = 86400
 findtime = 3600
 action   = iptables-allports[name=asterisk, protocol=all]
 ignoreip = 127.0.0.1/8
 
+
 [freepbx]
 backend = auto
 enabled  = true
 filter   = freepbx
 logpath  = /var/log/asterisk/freepbx_security.log
+logencoding = utf-8
+datepattern = %%Y-%%b-%%d %%H:%%M:%%S
 maxretry = 5
 bantime = 86400
 findtime = 3600
 action   = iptables-allports[name=freepbx, protocol=all]
 ignoreip = 127.0.0.1/8
-datepattern = %%Y-%%b-%%d %%H:%%M:%%S
+

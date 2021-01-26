@@ -6,6 +6,9 @@ prepare_service single
 PROCESS_NAME="fail2ban"
 
 if var_true "$ENABLE_FAIL2BAN" ;  then
+	rm /var/run/fail2ban/fail2ban.sock
+	rm /etc/fail2ban/fail2ban.conf
+	rm /etc/fail2ban/jail.conf
 	mkdir -p /var/log/asterisk/
 	mkdir -p /var/log/fail2ban/
 	touch /var/log/asterisk/full

@@ -22,14 +22,14 @@ fi
 echo 'Creating pod: ' $podname
 ### create pod
 podman pod create -n $podname --hostname voip.pir.lt \
-    --network bridge \
+    --network static \
     -p 80:80/tcp -p 443:443/tcp \
     -p 5060:5060/tcp -p 5060:5060/udp -p 5061:5061/tcp -p 5061:5061/udp \
     -p 8089:8089 \
     -p 18000-18200:18000-18200/udp
 
 echo 'Starting pod: ' $podname
-podman pod start pbx
+podman pod start $podname
 
 echo 'Running DB container: ' $podname-db
 ### create db container

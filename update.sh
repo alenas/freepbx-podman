@@ -2,6 +2,7 @@
 if [ $# -ne 2 ]  
 then 
     echo 'Need 2 parameters: PODNAME, VERSION. Got: ' $@
+    exit 1
 fi
 
 podname=$1
@@ -27,7 +28,7 @@ podman run -d --name $podname-app --pod $podname \
     -e ENABLE_ZABBIX=FALSE \
     -e ENABLE_XMPP=FALSE \
     -e UCP_FIRST=FALSE \
-    -e FREEPBX_VERSION=15.0.17.15 \
+    -e FREEPBX_VERSION=15.0.17.26 \
     -e INSTALL_ADDITIONAL_MODULES="webrtc callforward findmefollow ringgroups cel" \
     -e DB_EMBEDDED=FALSE \
     -e DB_HOST=127.0.0.1 \

@@ -1,15 +1,32 @@
+[DEFAULT] 
+bantime.increment = true 
+bantime.factor = 1 
+bantime.formula = ban.Time * (1<<(ban.Count if ban.Count<20 else 20)) * banFactor 
+bantime.overalljails = true
+
 [asterisk]
 backend = auto
 enabled  = true
 filter   = asterisk-security
-logpath  = /var/log/asterisk/full
+logpath  = /var/log/asterisk/security
 logencoding = utf-8
 maxretry = 5
-bantime = 86400
-findtime = 3600
+bantime = 1d
+findtime = 12h
 action   = iptables-allports[name=asterisk, protocol=all]
-ignoreip = 127.0.0.1/8
+ignoreip = 127.0.0.1/8 78.56.50.247 84.15.148.200 84.15.148.237 85.206.138.104/29 85.206.138.144/28 85.206.138.224/29 85.206.138.192/28
 
+[asterisk-lt]
+backend = auto
+enabled  = true
+filter   = asterisk-security-lt
+logpath  = /var/log/asterisk/security
+logencoding = utf-8
+maxretry = 2
+bantime = 60d
+findtime = 1d
+action   = iptables-allports[name=asterisk, protocol=all]
+ignoreip = 127.0.0.1/8 78.56.50.247 84.15.148.200 84.15.148.237 85.206.138.104/29 85.206.138.144/28 85.206.138.224/29 85.206.138.192/28
 
 [freepbx]
 backend = auto
@@ -17,10 +34,20 @@ enabled  = true
 filter   = freepbx
 logpath  = /var/log/asterisk/freepbx_security.log
 logencoding = utf-8
-datepattern = %%Y-%%b-%%d %%H:%%M:%%S
-maxretry = 5
-bantime = 86400
-findtime = 3600
+maxretry = 3
+bantime = 3h
+findtime = 9h
 action   = iptables-allports[name=freepbx, protocol=all]
-ignoreip = 127.0.0.1/8
+ignoreip = 127.0.0.1/8 84.15.148.200
 
+[freepbx-lt]
+backend = auto
+enabled  = true
+filter   = freepbx-lt
+logpath  = /var/log/asterisk/freepbx_security.log
+logencoding = utf-8
+maxretry = 1
+bantime = 60d
+findtime = 1d
+action   = iptables-allports[name=freepbx, protocol=all]
+ignoreip = 127.0.0.1/8 84.15.148.200

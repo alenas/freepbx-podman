@@ -1,8 +1,10 @@
 /var/log/asterisk/full
+/var/log/asterisk/security
 /var/log/asterisk/freepbx.log
 /var/log/asterisk/freepbx_security.log
 /var/log/asterisk/ucp_err.log
-/var/log/asterisk/ucp_out.log {
+/var/log/asterisk/ucp_out.log 
+{
     daily
     ifempty
     rotate 7

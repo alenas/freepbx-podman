@@ -1,4 +1,5 @@
-/var/log/fop/fop2_debug.log {
+/var/log/fop/fop2_debug.log 
+{
     daily
     ifempty
     rotate 7

@@ -12,6 +12,8 @@ ENV ASTERISK_VERSION=18.2.1 \
     RTP_START=18000 \
     RTP_FINISH=18200
 
+RUN apt-get update && apt-get upgrade -y
+
 ### Pin libxml2 packages to Debian repositories
 RUN echo "Package: libxml2*" > /etc/apt/preferences.d/libxml2 && \
     echo "Pin: release o=Debian,n=buster" >> /etc/apt/preferences.d/libxml2 && \
@@ -238,19 +240,19 @@ RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729
     make && \
     make install && \
     \
-    ldconfig && \
-    \
+    ldconfig
+    
 ### Cleanup
-    mkdir -p /var/run/fail2ban && \
+RUN mkdir -p /var/run/fail2ban && \
     cd / && \
     rm -rf /usr/src/* /tmp/* /etc/cron* && \
     apt-get purge -y $ASTERISK_BUILD_DEPS && \
     apt-get -y autoremove && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    \
+    rm -rf /var/lib/apt/lists/*
+    
 ### FreePBX hacks
-    sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/${PHP_VERSION}/apache2/php.ini && \
+RUN sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/${PHP_VERSION}/apache2/php.ini && \
     sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/${PHP_VERSION}/apache2/php.ini && \
     a2disconf other-vhosts-access-log.conf && \
     a2enmod rewrite && \
@@ -258,10 +260,10 @@ RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729
     rm -rf /var/log/* && \
     mkdir -p /var/log/asterisk && \
     mkdir -p /var/log/apache2 && \
-    mkdir -p /var/log/httpd && \
-    \
+    mkdir -p /var/log/httpd
+    
 ### Setup for data persistence
-    mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
+RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
     mv /home/asterisk /assets/config/home/ && \
     mv /var/lib/asterisk /assets/config/var/lib/ && \
     ln -s /data/var/lib/asterisk /var/lib/asterisk && \
@@ -275,7 +277,6 @@ RUN git clone https://github.com/BelledonneCommunications/bcg729 /usr/src/bcg729
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
     rm -rf /etc/asterisk && \
     ln -s /data/etc/asterisk /etc/asterisk && \
-    mv /etc/fail2ban /data/etc/fail2ban && \
     ln -s /data/etc/fail2ban /etc/fail2ban
 
 ### Networking configuration

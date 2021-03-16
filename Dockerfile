@@ -1,13 +1,19 @@
-FROM tiredofit/nodejs:10-debian-latest
-LABEL maintainer="Alenas Kisonas"
+FROM debian:buster-slim
+LABEL maintainer="Alenas Kisonas <alenas@hotmail.com>"
+
+# https://downloads.asterisk.org/pub/telephony/asterisk/releases
+ARG ASTERISK_VERSION=18.2.2
+
+# https://github.com/FreePBX/framework/releases
+ARG FREEPBX_VERSION=15.0.17.27
 
 ### Set defaults
-ENV ASTERISK_VERSION=18.2.1 \
-    FREEPBX_VERSION=15.0.17.26 \
+ENV ASTERISK_VERSION=${ASTERISK_VERSION} \
+    FREEPBX_VERSION=${FREEPBX_VERSION} \
     BCG729_VERSION=1.0.4 \
     G72X_CPUHOST=penryn \
     G72X_VERSION=0.1 \
-    PHP_VERSION=5.6 \
+    PHP_VERSION=7.3 \
     SPANDSP_VERSION=20180108 \
     RTP_START=18000 \
     RTP_FINISH=18200

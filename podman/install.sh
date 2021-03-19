@@ -2,29 +2,28 @@
 podname=pbx
 version=latest
 
-### check if install is already there
-if [ -f set-env-pwd.sh ]; then
-    echo 'Seems like there is an existing install, exiting!'
+### check if environment is set
+if [ ! -f .env ]; then
+    echo 'You need to create .env file from default.env first!'
     exit 1
 fi
 
 mkdir -p /$podname/data
 mkdir -p /$podname/www
 mkdir -p /$podname/logs
+mkdir -p /$podname/db
 
-if [ ! -f set-env-pwd.sh ]; then
-    echo 'Generating random MySQL passwords and saving to set-env.pwd.sh'
-    . generate-mysql-pwd.sh
-else
-    . set-env-pwd.sh
-fi
+echo 'Cleaning up previous pods...'
+podman pod stop $podname
+podman pod rm $podname
 
 echo 'Creating pod: ' $podname
 ### create pod
 podman pod create -n $podname --hostname voip.pir.lt \
+    --runtime=/usr/lib/cri-o-runc/sbin/runc \
     --network static \
     -p 80:80/tcp -p 443:443/tcp \
-    -p 5060:5060/tcp -p 5060:5060/udp -p 5061:5061/tcp -p 5061:5061/udp \
+    -p 7520-7521:5060-5061/tcp -p 7520-7521:5060-5061/udp \
     -p 8089:8089 \
     -p 18000-18200:18000-18200/udp
 
@@ -34,12 +33,22 @@ podman pod start $podname
 echo 'Running DB container: ' $podname-db
 ### create db container
 podman run -d --name $podname-db --pod $podname \
-    -v $podname-db:/var/lib/mysql \
-    -e MYSQL_DATABASE=asterisk \
-    -e MYSQL_USER=asterisk \
-    -e MYSQL_PASSWORD=$MYSQLPWD \
-    -e MYSQL_ROOT_PASSWORD=$MYSQLROOTPWD \
+    --runtime=/usr/lib/cri-o-runc/sbin/runc \
+    -v /$podname/db:/var/lib/mysql \
+    --env-file=.env \
         mariadb:10.5
 
-### create app container - run and then attach to
-. update.sh $podname $version
+echo 'Running APP container: ' $podname-app
+### create app container 
+podman run -d --name $podname-app --pod $podname \
+    --runtime=/usr/lib/cri-o-runc/sbin/runc \
+    -v /$podname/data:/data \
+    -v /$podname/logs:/var/log \
+    -v /$podname/www:/var/www/html \
+    --entrypoint="/init" \
+    --env-file=.env \
+    --cap-add=NET_ADMIN \
+        al3nas/freepbx:$version
+
+### remind to refresh signatures 
+echo "Run this after it starts: podman exec -t $podname-app fwconsole ma refreshsignatures"

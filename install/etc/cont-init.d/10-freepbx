@@ -239,14 +239,6 @@ EOF
   check_process
   silent fwconsole ma downloadinstall ucp
 
-  if var_true "$ENABLE_XMPP" ;  then
-    print_notice "- xmpp"
-    silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf run &
-    check_process
-    silent fwconsole ma downloadinstall xmpp
-    sed -i 's/uri: mongodb:\/\/localhost\/letschat/uri: mongodb:\/\/localhost:27017\/letschat?useNewUrlParser=true/g' "$WEBROOT"/admin/modules/xmpp/node/node_modules/lets-chat/settings.yml
-  fi
-
   if [[ -v INSTALL_ADDITIONAL_MODULES ]] ; then
     print_notice "Attempting to install additional FreePBX modules '${INSTALL_ADDITIONAL_MODULES}'"
     modules=$(echo "${INSTALL_ADDITIONAL_MODULES}" | tr "," "\n")
@@ -462,7 +454,7 @@ if [ "$VIRTUAL_PROTO" = "https" ] || var_true "$ENABLE_SSL" ;  then
   cat >> /etc/apache2/sites-enabled/000-default.conf << EOF
 <VirtualHost *:$HTTPS_PORT>
     SSLEngine on
-    SSLCertificateFile "/etc/asterisk/keys/integration/certificate.pem"
+    SSLCertificateFile "/etc/asterisk/keys/integration/webserver.crt"
     SSLCertificateKeyFile "/etc/asterisk/keys/integration/webserver.key"
     ErrorLog /var/log/apache2/error.log
     CustomLog /var/log/apache2/access.log common
@@ -539,24 +531,8 @@ if var_true "$ENABLE_SMTP" ;  then
   chmod 0600 /etc/msmtprc
 fi
 
-### FOP2 setup
-if var_true "$ENABLE_FOP" ;  then
-  print_info "Starting operator panel"
-  chown -RH asterisk. /usr/local/fop2
-  rm -rf /var/run/fop2.*
-  mkdir -p /var/log/fop
-  chown -R asterisk. /var/log/fop
-  sed -i "s/manager_host=.*/manager_host=127.0.0.1/g" /usr/local/fop2/fop2.cfg
-  /usr/local/fop2/fop2_server -D
-fi
-
-#chown asterisk:asterisk /usr/sbin/watson-transcription
 
 silent service apache2 restart
-
-if var_true "$ENABLE_XMPP" ;  then
-  silent mongod --unixSocketPrefix=/var/run/mongodb --config /etc/mongod.conf --shutdown
-fi
 
 if var_true "$UCP_FIRST" ; then
    print_info "Web server started - container initialization completed - visit your http(s)://...${ADMIN_DIRECTORY} to administer"

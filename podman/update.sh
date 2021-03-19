@@ -8,38 +8,31 @@ fi
 podname=$1
 version=$2
 
-### reuse DB credentials
-. set-env-pwd.sh
+### check if environment is set
+if [ ! -f .env ]; then
+    echo 'You need to create .env file from default.env first!'
+    exit 1
+fi
 
 echo 'Stopping and removing APP container: ' $podname-app
 podman stop $podname-app
 podman rm $podname-app
 
+### stop db and backup everything
+podman stop $podname-db
 echo 'Backing up...'
-#rsync -a /pbx/ ~/backup/pbx-dir.bkp.$(date +%Y%m%d-%H.%M.%S)
+rsync -a /pbx/ ~/backup/pbx-dir.bkp.$(date +%Y%m%d-%H.%M.%S)
+podman start $podname-db
+
 
 echo 'Running APP container: ' $podname-app
 ### create app container - run attached to 
-podman create --name $podname-app --pod $podname \
+podman run -d --name $podname-app --pod $podname \
     --runtime=/usr/lib/cri-o-runc/sbin/runc \
     -v /$podname/data:/data \
     -v /$podname/logs:/var/log \
     -v /$podname/www:/var/www/html \
-    -e RTP_START=18000 \
-    -e RTP_FINISH=18200 \
-    -e ENABLE_FAIL2BAN=TRUE \
-    -e ENABLE_SSL=TRUE \
-    -e ENABLE_ZABBIX=FALSE \
-    -e ENABLE_XMPP=FALSE \
-    -e UCP_FIRST=FALSE \
-    -e FREEPBX_VERSION=15.0.17.26 \
-    -e INSTALL_ADDITIONAL_MODULES="webrtc callforward findmefollow ringgroups cel" \
-    -e DB_EMBEDDED=FALSE \
-    -e DB_HOST=127.0.0.1 \
-    -e DB_PORT=3306 \
-    -e DB_NAME=asterisk \
-    -e DB_USER=asterisk \
-    -e DB_PASS=$MYSQLPWD \
+    --env-file=.env \
     --cap-add=NET_ADMIN \
         al3nas/freepbx:$version
 

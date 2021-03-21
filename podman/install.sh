@@ -45,10 +45,6 @@ podman run -d --name $podname-app --pod $podname \
     -v /$podname/data:/data \
     -v /$podname/logs:/var/log \
     -v /$podname/www:/var/www/html \
-    --entrypoint="/init" \
     --env-file=.env \
     --cap-add=NET_ADMIN \
         al3nas/freepbx:$version
-
-### remind to refresh signatures 
-echo "Run this after it starts: podman exec -t $podname-app fwconsole ma refreshsignatures"

@@ -3,5 +3,5 @@ podman build -t al3nas/freepbx:latest \
     --runtime=/usr/lib/cri-o-runc/sbin/runc \
     --cap-add=NET_ADMIN \
     --squash \
-    --force-rm=false \
+    --format=docker \
     -f Dockerfile

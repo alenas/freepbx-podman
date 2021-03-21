@@ -284,11 +284,11 @@ RUN sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/${PHP_VERSI
     sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php/${PHP_VERSION}/apache2/php.ini && \
     a2disconf other-vhosts-access-log.conf && \
     a2enmod rewrite && \
-    a2enmod headers && \
-    rm -rf /var/log/* && \
-    mkdir -p /var/log/asterisk && \
+    a2enmod headers
+
+RUN mkdir -p /var/log/asterisk && \
     mkdir -p /var/log/apache2 && \
-    mkdir -p /var/log/httpd && \
+    mkdir -p /var/log/httpd
     
 ### Setup for data persistence
 RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \

@@ -38,4 +38,3 @@ podman run -d --name $podname-app --pod $podname \
 
 ### remind to refresh signatures 
 echo "Run this after it starts: podman exec -t $podname-app fwconsole ma refreshsignatures"
-#podman attach $podname-app

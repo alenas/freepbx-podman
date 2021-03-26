@@ -1,0 +1,34 @@
+FNGPRINT=$(openssl x509 -in /etc/asterisk/keys/integration/webserver.crt -noout -fingerprint)
+FNGR_HTTPD=$(echo | openssl s_client -connect 127.0.0.1:443 2>/dev/null | openssl x509 -noout -fingerprint)
+if [[ -n "$FNGR_HTTPD" ]]; then 
+    if [[ "$FNGPRINT" != "$FNGR_HTTPD" ]]; then
+        echo "HTTPD restarting..."
+        service apache2 restart
+    else
+        echo "HTTPD cert is OK"
+    fi
+else
+    echo "HTTPD on 443 not running"
+fi 
+FNGR_NODE=$(echo | openssl s_client -connect 127.0.0.1:8003 2>/dev/null | openssl x509 -noout -fingerprint)
+if [[ -n "$FNGR_NODE" ]]; then 
+    if [[ "$FNGPRINT" != "$FNGR_NODE" ]]; then
+        echo "NODE restarting..."
+        service apache2 restart
+    else
+        echo "NODE cert is OK"
+    fi
+else
+    echo "NODE on 8003 not running"
+fi 
+FNGR_WSS=$(echo | openssl s_client -connect 127.0.0.1:8089 2>/dev/null | openssl x509 -noout -fingerprint)
+if [[ -n "$FNGR_WSS" ]]; then 
+    if [[ "$FNGPRINT" != "$FNGR_WSS" ]]; then
+        echo "WSS restarting..."
+        fwconsole restart
+    else
+        echo "WSS cert is OK"
+    fi
+else
+    echo "WSS on 8089 not running"
+fi 

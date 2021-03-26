@@ -23,6 +23,7 @@ podman pod create -n $podname --hostname voip.pir.lt \
     --runtime=/usr/lib/cri-o-runc/sbin/runc \
     --network static \
     -p 80:80/tcp -p 443:443/tcp \
+    -p 5060:5060/udp -p 5060:5060/tcp \
     -p 7520-7521:5060-5061/tcp -p 7520-7521:5060-5061/udp \
     -p 8089:8089 \
     -p 18000-18200:18000-18200/udp

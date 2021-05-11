@@ -2,10 +2,10 @@ FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Alenas Kisonas <alenas@hotmail.com>"
 
 # https://downloads.asterisk.org/pub/telephony/asterisk/releases
-ARG ASTERISK_VERSION=18.2.2
+ARG ASTERISK_VERSION=18.4.0
 
 # https://github.com/FreePBX/framework/releases
-ARG FREEPBX_VERSION=15.0.17.27
+ARG FREEPBX_VERSION=15.0.17.34
 
 ### Set defaults
 ENV ASTERISK_VERSION=${ASTERISK_VERSION} \
@@ -288,7 +288,8 @@ RUN sed -i -e "s/memory_limit = 128M/memory_limit = 256M/g" /etc/php/${PHP_VERSI
 
 RUN mkdir -p /var/log/asterisk && \
     mkdir -p /var/log/apache2 && \
-    mkdir -p /var/log/httpd
+    mkdir -p /var/log/httpd && \
+    mkdir -p /etc/fail2ban
     
 ### Setup for data persistence
 RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
@@ -304,8 +305,7 @@ RUN mkdir -p /assets/config/var/lib/ /assets/config/home/ && \
     rm -rf /var/spool/asterisk && \
     ln -s /data/var/spool/asterisk /var/spool/asterisk && \
     rm -rf /etc/asterisk && \
-    ln -s /data/etc/asterisk /etc/asterisk && \
-    ln -s /data/etc/fail2ban /etc/fail2ban
+    ln -s /data/etc/asterisk /etc/asterisk
 
 ### Networking configuration
 EXPOSE 80 443 4445 4569 5060/udp 5160/udp 5061 5161 8001 8003 8088 8089 18000-18200/udp

@@ -9,6 +9,7 @@ if var_true "$ENABLE_FAIL2BAN" ;  then
 	rm /var/run/fail2ban/fail2ban.sock
 	rm /etc/fail2ban/fail2ban.conf
 	rm /etc/fail2ban/jail.conf
+	rm -r /etc/fail2ban/jail.d
 	mkdir -p /var/log/asterisk/
 	mkdir -p /var/log/fail2ban/
 	touch /var/log/asterisk/full

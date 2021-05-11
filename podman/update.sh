@@ -1,12 +1,12 @@
 #!/bin/bash
-if [ $# -ne 2 ]  
+if [ $# -ne 1 ]  
 then 
-    echo 'Need 2 parameters: PODNAME, VERSION. Got: ' $@
+    echo 'Need 1 parameter: VERSION. Got: ' $@
     exit 1
 fi
 
-podname=$1
-version=$2
+podname=pbx
+version=$1
 
 ### check if environment is set
 if [ ! -f .env ]; then

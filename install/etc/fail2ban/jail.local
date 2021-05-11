@@ -22,7 +22,7 @@ filter   = asterisk-security-lt
 logpath  = /var/log/asterisk/security
 logencoding = utf-8
 maxretry = 2
-bantime = 60d
+bantime = 7d
 findtime = 1d
 action   = iptables-allports[name=asterisk, protocol=all]
 ignoreip = 127.0.0.1/8 78.56.50.247 84.15.148.200 84.15.148.237 85.206.138.104/29 85.206.138.144/28 85.206.138.224/29 85.206.138.192/28
@@ -44,10 +44,7 @@ filter   = freepbx-lt
 logpath  = /var/log/asterisk/freepbx_security.log
 logencoding = utf-8
 maxretry = 1
-bantime = 60d
+bantime = 7d
 findtime = 1d
 action   = iptables-allports[name=freepbx, protocol=all]
 ignoreip = 127.0.0.1/8 84.15.148.200
-
-[sshd]
-enabled = false

@@ -1,12 +1,7 @@
 #!/bin/bash
-if [ $# -ne 1 ]  
-then 
-    echo 'Need 1 parameter: VERSION. Got: ' $@
-    exit 1
-fi
 
 podname=pbx
-version=$1
+version=184
 
 ### check if environment is set
 if [ ! -f .env ]; then
@@ -14,20 +9,23 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
+echo "Stopping and disabling $podname services"
+systemctl stop pod-pbx
+systemctl disable pod-pbx
+systemctl disable container-pbx-app
+systemctl disable container-pbx-db
+
 echo 'Stopping and removing APP container: ' $podname-app
-podman stop $podname-app
+podman pod stop $podname
 podman rm $podname-app
 
 ### stop db and backup everything
-podman stop $podname-db
 echo 'Backing up...'
-rsync -a /pbx/ ~/backup/pbx-dir.bkp.$(date +%Y%m%d-%H.%M.%S)
-podman start $podname-db
+#rsync -a /pbx/ ~/backup/pbx-dir.bkp.$(date +%Y%m%d-%H.%M.%S)
 
-
-echo 'Running APP container: ' $podname-app
+echo 'Creating APP container: ' $podname-app
 ### create app container - run attached to 
-podman run -d --name $podname-app --pod $podname \
+podman create --name $podname-app --pod $podname \
     --runtime=/usr/lib/cri-o-runc/sbin/runc \
     -v /$podname/data:/data \
     -v /$podname/logs:/var/log \
@@ -36,5 +34,15 @@ podman run -d --name $podname-app --pod $podname \
     --cap-add=NET_ADMIN \
         al3nas/freepbx:$version
 
+echo "Creating new PBX services"
+podman generate systemd -f -n -t=30 $podname
+mv -f *.service /etc/systemd/system/
+
+echo "Enabling services"
+systemctl enable pod-$podname
+systemctl enable container-$podname-app
+systemctl enable container-$podname-db
+
+#systemctl start pod-$podname
 ### remind to refresh signatures 
-echo "Run this after it starts: podman exec -t $podname-app fwconsole ma refreshsignatures"
+echo "Run this after it starts: podman exec -t $podname-app fwconsole util signaturecheck"

@@ -2,10 +2,10 @@ FROM tiredofit/nodejs:10-debian-latest
 LABEL maintainer="Alenas Kisonas <alenas@hotmail.com>"
 
 # https://downloads.asterisk.org/pub/telephony/asterisk/releases
-ARG ASTERISK_VERSION=18.4.0
+ARG ASTERISK_VERSION=18.5.0
 
 # https://github.com/FreePBX/framework/releases
-ARG FREEPBX_VERSION=15.0.17.34
+ARG FREEPBX_VERSION=15.0.17.40
 
 ### Set defaults
 ENV ASTERISK_VERSION=${ASTERISK_VERSION} \

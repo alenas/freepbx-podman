@@ -5,6 +5,6 @@ prepare_service single
 
 ### Check to see if enabled/disabled
 print_debug "Setting Cron tasks"
-(crontab -l | grep -qF '/usr/sbin/check_certs') || { crontab -l; echo '59 3 * * 1 bash /usr/sbin/check_certs >/root/certs.log 2>&1'; } | crontab -
+(crontab -u root -l | grep -qF '/usr/sbin/check_certs') || { crontab -u root -l; echo '59 3 * * 1 bash /usr/sbin/check_certs >/data/certs.log 2>&1'; } | crontab -
 
 liftoff

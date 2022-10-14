@@ -1,7 +1,7 @@
 #!/bin/bash
 
 podname=pbx
-version=184
+version=18.5
 
 ### check if environment is set
 if [ ! -f .env ]; then
@@ -10,26 +10,27 @@ if [ ! -f .env ]; then
 fi
 
 echo "Stopping and disabling $podname services"
-systemctl stop pod-pbx
-systemctl disable pod-pbx
-systemctl disable container-pbx-app
-systemctl disable container-pbx-db
+systemctl stop pod-$podname
+systemctl disable pod-$podname
+systemctl disable container-$podname-app
+systemctl disable container-$podname-db
 
 echo 'Stopping and removing APP container: ' $podname-app
 podman pod stop $podname
 podman rm $podname-app
 
 ### stop db and backup everything
-echo 'Backing up...'
-#rsync -a /pbx/ ~/backup/pbx-dir.bkp.$(date +%Y%m%d-%H.%M.%S)
+echo 'Backing up data...'
+rsync -a /pbx/ /pbx-$version
 
 echo 'Creating APP container: ' $podname-app
-### create app container - run attached to 
+### create app container
 podman create --name $podname-app --pod $podname \
     --runtime=/usr/lib/cri-o-runc/sbin/runc \
-    -v /$podname/data:/data \
-    -v /$podname/logs:/var/log \
-    -v /$podname/www:/var/www/html \
+    --security-opt seccomp=unconfined \
+    -v /pbx-$version/data:/data \
+    -v /pbx-$version/logs:/var/log \
+    -v /pbx-$version/www:/var/www/html \
     --env-file=.env \
     --cap-add=NET_ADMIN \
         al3nas/freepbx:$version

@@ -6,7 +6,7 @@ version=18.5
 ### check if environment is set
 if [ ! -f .env ]; then
     echo 'You need to create .env file from default.env first!'
-    exit 1
+    return 1
 fi
 
 echo "Stopping and disabling $podname services"
@@ -26,7 +26,6 @@ rsync -a /pbx/ /pbx-$version
 echo 'Creating APP container: ' $podname-app
 ### create app container
 podman create --name $podname-app --pod $podname \
-    --runtime=/usr/lib/cri-o-runc/sbin/runc \
     --security-opt seccomp=unconfined \
     -v /pbx-$version/data:/data \
     -v /pbx-$version/logs:/var/log \
